@@ -1,0 +1,70 @@
+/*  electric imp Web Response Example (device)
+    by: Jim Lindblom
+    SparkFun Electronics
+    date: November 5, 2013
+    license: Beerware. Use, reuse, and modify this code however you see fit.
+    If you find it useful, buy me a beer some day!
+    The idea for this code was inspired by this gist by industrialinternet:
+    https://gist.github.com/industrialinternet/5419730
+ 
+    This example code demonstrates how an imp can publish information to a
+    webpage. All of the imp's pins are configured as inputs. They can be either
+    digital or analog.
+ 
+    There are three parts to this code:
+    1. The imp (device) code. The imp itself simply reads its pin values, and
+        sends them out to the agent.
+    2. The agent code. The agent waits for an http request. On such a request,
+        it'll construct a JSON of the imp's pin values, and respond with that.
+    3. An html page to make the http request and handle the response from the agent.
+        There are a number of ways to do this. See one example at the bottom of
+        The agent code.
+*/
+ 
+///////////
+// Setup //
+///////////
+ 
+// Register imp. This good practice:
+imp.configure("Imp Pin Web Response",[],[]);
+ 
+// Configure pins:
+hardware.pin1.configure(DIGITAL_IN_PULLUP);
+hardware.pin2.configure(DIGITAL_IN_PULLUP);
+hardware.pin5.configure(ANALOG_IN);
+hardware.pin7.configure(DIGITAL_IN_PULLUP);
+hardware.pin8.configure(DIGITAL_IN_PULLUP);
+hardware.pin9.configure(DIGITAL_IN_PULLUP);
+ 
+//////////////////////////
+// Function Definitions //
+//////////////////////////
+ 
+// sendPins reads each of the pins, stores them in a table, and sends that
+// table out to the agent.
+// It calls itself every 100ms -- 10 times a second.
+function sendPins()
+{
+    // Read each of the pins and store them in a table.
+    // The key names -- "pin1", "pin2", etc. -- should be kept the same, unless
+    // you also change them in the device.on() function on the agent.
+    local pinValues =
+    {
+        pin1 = hardware.pin1.read(),
+        pin2 = hardware.pin2.read(),
+        pin5 = hardware.pin5.read(),
+        pin7 = hardware.pin7.read(),
+        pin8 = hardware.pin8.read(),
+        pin9 = hardware.pin9.read(),
+        voltage = hardware.voltage()    // We'll also send the operating voltage.
+    }
+ 
+    // Once the table is constructed, send it out to the agent with "impValues"
+    // as the identifier.
+    agent.send("impValues", pinValues);
+ 
+    // Schedule a wakeup in 100ms, with a callback to this function.
+    imp.wakeup(0.1, sendPins);
+}
+ 
+sendPins(); // Call sendPins once, and let it do the rest of the work.
