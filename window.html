@@ -10,7 +10,7 @@
             // https://agent.electricimp.com/UpyYpRLmBB7m
             // pollRate defines how often the values on your page will refresh.
             var externalURL ="SUIOqMlHJ-eE";
-            var pollRate ="1";
+            var pollRate ="500";
 
             function poll(){
                 // Construct an ajax() GET request.
@@ -23,7 +23,6 @@
                     success: function(agentMsg) {   // Function to run when request succeeds.
 
                         // jQuery find "pin1" id and overwrite its data with "pin1" key value in agentMsg
-                        $("log").htlm(doument.write(agentMsg.log));
                         $("#pin1").html(agentMsg.pin1);             
                         $("#pin2").html(agentMsg.pin2);
                         $("#pin5").html(agentMsg.pin5);
@@ -31,6 +30,7 @@
                         $("#pin8").html(agentMsg.pin8);
                         $("#pin9").html(agentMsg.pin9);
                         $("#vin").html(agentMsg.voltage);
+                        $("#score").html(agentMsg.score);
 
                         updateBG(agentMsg.pin5);    // Try this if you have a photocell connected to pin 5
                     },
@@ -62,8 +62,7 @@
     <body>
         <h3>Imp Pins:</h3>
         <div id="pins">
-        <p> <b>Log:</b> <span id="log"><!-- This is where the pin 1 reading will go --></span></p>
-        <p> <b>Pin 1:</b> <span id="pin1"><!-- This is where the pin 1 reading will go --></span></p>
+        <p> <b>Pin 1:</b> <span id="score"><!-- This is where the pin 1 reading will go --></span></p>
         <p> <b>Pin 2:</b> <span id="pin2"><!-- This is where the pin 2 reading will go --></span></p>
         <p> <b>Pin 5:</b> <span id="pin5"><!-- This is where the pin 5 reading will go --></span></p>
         <p> <b>Pin 7:</b> <span id="pin7"><!-- This is where the pin 7 reading will go --></span></p>
