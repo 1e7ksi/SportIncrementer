@@ -26,10 +26,7 @@ _pin7 <- "";
 _pin8 <- "";
 _pin9 <- "";
 _voltage <- "";
-_team_one_score <- 0;
-_team_two_score <- 0;
-_team_select <- false; //False  - team_one, True- team_two
-_team <- "";
+_score <- "";
 
 //////////////////////////
 // Function Definitions //
@@ -38,12 +35,20 @@ _team <- "";
 // respondImpValues is called whenever an http request is received.
 // This function will construct a JSON table containing our most recently
 // received imp pin values, then send that out to the requester.
+
+
 function respondImpValues(request,response){
-    
+
+    // First, construct a JSON table with our received pin values
     local pinTable = {
-        "team": ""+team+"",
-        "1score": ""+_team_one_score+"",
-        "2score": ""+_team_two_score+"",
+        "pin1": ""+_pin1+"",    // e.g.: "pin1" : "1"
+        "pin2": ""+_pin2+"",
+        "pin5": ""+_pin5+"",    // e.g.: "pin5" : "48491"
+        "pin7": ""+_pin7+"",
+        "pin8": ""+_pin8+"",
+        "pin9": ""+_pin9+"",
+        "voltage": ""+_voltage+"" + " V",   // e.g.: "voltage" : "3.274 V"
+        "score": ""+_score+""
     }
 
     // the http.jsonencode(object) function takes a squirrel variable and returns a
@@ -66,35 +71,14 @@ function respondImpValues(request,response){
 // from the device side. This simple function simply fills up our global variables
 // with the equivalent vars received from the imp.
 device.on("impValues", function(iv) {
-    _pin1 = iv.pin1; //D2
-    _pin2 = iv.pin2; //D3
-    _pin5 = iv.pin5; //D4
-    _pin7 = iv.pin7; //D5
-    _pin8 = iv.pin8; //D6
+    _pin1 = iv.pin1;
+    _pin2 = iv.pin2;
+    _pin5 = iv.pin5;
+    _pin7 = iv.pin7;
+    _pin8 = iv.pin8;
     _pin9 = iv.pin9;
     _voltage = iv.voltage;
-    if(_pin7 === 1){
-    	team_select = false;
-    }else if(_pin8 === 1){
-    	team_select = true;
-    }
-    var inc = 0;
-    if(_pin1 === 1){
-    	inc = 3;
-    }else if(_pin2 === 1){
-    	inc = 2;
-    }else if(_pin5 === 1){
-    	inc = 1;
-    }
-    if(inc > 0){
-    	if(team_select === false){
-    		_team_one_score = _team_one_score + inc;
-    		_team = "Team 1";
-    	}else{
-    		_team_two_score = _team_two_score + inc;
-    		_team = "Team 2";
-    	}
-    }
+    _score = _pin1;
     });
 
 ///////////
